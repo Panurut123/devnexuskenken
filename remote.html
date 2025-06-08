@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevNexus.KenKen Remote Viewer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6366f1;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-bg: #1f2937;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --accent-color: #8b5cf6;
+        }
+
+        [data-theme="dark"] {
+            --card-bg: #374151;
+            --text-color: #f9fafb;
+            --border-color: #4b5563;
+            --dark-bg: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            color: var(--text-color);
+            padding: 1rem;
+        }
+
+        .remote-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .remote-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .remote-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .remote-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .remote-content {
+            padding: 2rem;
+        }
+
+        .game-selector {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .game-selector h3 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .selector-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .selector-group input, .selector-group select {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .selector-group input:focus, .selector-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .load-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .load-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .load-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .game-display {
+            display: none;
+        }
+
+        .game-display.active {
+            display: block;
+        }
+
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+
+        .info-card h4 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .boards-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .board-section {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .board-section h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .remote-board {
+            display: grid;
+            gap: 2px;
+            background: var(--primary-color);
+            padding: 10px;
+            border-radius: 0.5rem;
+            aspect-ratio: 1;
+            margin: 0 auto;
+            max-width: 400px;
+        }
+
+        .remote-cell {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            color: var(--text-color);
+            position: relative;
+            min-height: 40px;
+        }
+
+        .remote-cell.current {
+            background: var(--warning-color);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .remote-cell.correct {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .remote-cell.incorrect {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .remote-cell .cage-label {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 0.6em;
+            color: var(--secondary-color);
+            font-weight: normal;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .remote-cell.cage-top {
+            border-top: 3px solid var(--accent-color);
+        }
+
+        .remote-cell.cage-left {
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .remote-cell.cage-right {
+            border-right: 3px solid var(--accent-color);
+        }
+
+        .remote-cell.cage-bottom {
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator.offline {
+            background: var(--danger-color);
+        }
+
+        .refresh-controls {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+        }
+
+        .refresh-controls h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .auto-refresh-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .manual-refresh {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .manual-refresh:hover {
+            background: #5b21b6;
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .remote-container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .remote-content {
+                padding: 1rem;
+            }
+
+            .boards-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .game-info {
+                grid-template-columns: 1fr;
+            }
+
+            .selector-group {
+                flex-direction: column;
+            }
+
+            .selector-group input, .selector-group select {
+                min-width: auto;
+            }
+        }
+        /* Password Protection Styles */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .password-modal {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .password-modal h2 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 2px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .password-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .password-submit:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .password-error {
+            color: var(--danger-color);
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .main-content {
+            display: none;
+        }
+
+        .main-content.unlocked {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Protection Overlay -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-modal">
+            <h2><i class="fas fa-lock"></i> ป้อนรหัสผ่านเพื่อเข้าถึง</h2>
+            <p style="color: var(--text-color); margin-bottom: 1rem;">จำเป็นต้องมีรหัสผ่านเพื่อเข้าถึงหน้า Admin Remote</p>
+            <input type="password" class="password-input" id="passwordInput" placeholder="ใส่รหัสผ่าน" autocomplete="off">
+            <button class="password-submit" onclick="checkPassword()">เข้าสู่ระบบ</button>
+            <div class="password-error" id="passwordError">รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่</div>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="status-indicator" id="statusIndicator">
+            <i class="fas fa-wifi"></i>
+            <span>Online</span>
+        </div>
+
+        <div class="remote-container">
+        <div class="remote-header">
+            <h1><i class="fas fa-desktop"></i> KenKen Remote Viewer</h1>
+            <p>ดูเฉลยและสถานะเกมจากอุปกรณ์อื่น</p>
+        </div>
+
+        <div class="remote-content">
+            <div class="game-selector">
+                <h3><i class="fas fa-search"></i> เลือกเกมที่ต้องการดู</h3>
+                
+                <div class="selector-group">
+                    <input type="number" id="gameIdInput" placeholder="ใส่ Game ID (เช่น 1720234567890)" min="1">
+                    <select id="gameSelect">
+                        <option value="">หรือเลือกจากรายการ</option>
+                    </select>
+                </div>
+                
+                <button class="load-btn" onclick="loadGame()">
+                    <i class="fas fa-eye"></i> ดูเกม
+                </button>
+            </div>
+
+            <div class="refresh-controls">
+                <h4><i class="fas fa-sync"></i> การอัปเดต</h4>
+                <div class="auto-refresh-toggle">
+                    <span>Auto Refresh:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoRefreshToggle" onchange="toggleAutoRefresh()">
+                        <span class="slider"></span>
+                    </label>
+                    <button class="manual-refresh" onclick="manualRefresh()">
+                        <i class="fas fa-redo"></i> Refresh Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="game-display" id="gameDisplay">
+                <div class="game-info" id="gameInfo">
+                    <!-- Game info cards will be inserted here -->
+                </div>
+
+                <div class="boards-container">
+                    <div class="board-section">
+                        <h4><i class="fas fa-user"></i> สถานะปัจจุบันของผู้เล่น</h4>
+                        <div class="remote-board" id="playerBoard">
+                            <!-- Player board will be rendered here -->
+                        </div>
+                    </div>
+                    
+                    <div class="board-section">
+                        <h4><i class="fas fa-lightbulb"></i> เฉลยที่ถูกต้อง</h4>
+                        <div class="remote-board" id="solutionBoard">
+                            <!-- Solution board will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    </div> <!-- End main-content -->
+
+    <script>
+        // Password protection functionality
+        const CORRECT_PASSWORD = 'POTO33388!';
+        
+        function checkPassword() {
+            const inputPassword = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('passwordError');
+            
+            if (inputPassword === CORRECT_PASSWORD) {
+                // Correct password
+                document.getElementById('passwordOverlay').style.display = 'none';
+                document.getElementById('mainContent').classList.add('unlocked');
+                
+                // Store session
+                sessionStorage.setItem('remoteAccess', 'granted');
+            } else {
+                // Wrong password
+                errorDiv.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+                
+                // Add shake animation
+                const modal = document.querySelector('.password-modal');
+                modal.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    modal.style.animation = '';
+                }, 500);
+            }
+        }
+        
+        // Allow Enter key to submit password
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        
+        // Check if already authenticated in this session
+        window.addEventListener('load', function() {
+            if (sessionStorage.getItem('remoteAccess') === 'granted') {
+                document.getElementById('passwordOverlay').style.display = 'none';
+                document.getElementById('mainContent').classList.add('unlocked');
+            }
+        });
+        
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <script src="remote.js"></script>
+</body>
+</html> 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevNexus.KenKen - เกมปริศนาคณิตศาสตร์</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="theme-toggle" title="สลับธีม">
+        🌙
+    </button>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="title">DevNexus.KenKen</h1>
+            <p class="subtitle">เกมปริศนาคณิตศาสตร์ที่ท้าทาย</p>
+        </header>
+
+        <main>
+            <section class="select-section">
+                <div class="game-options">
+                    <div class="difficulty-selector">
+                        <h2>เลือกระดับความยาก</h2>
+                        <div class="difficulty-buttons">
+                            <button class="difficulty-btn easy">ง่าย</button>
+                            <button class="difficulty-btn medium">ปานกลาง</button>
+                            <button class="difficulty-btn hard">ยาก</button>
+                            <button class="difficulty-btn very-hard">ยากมาก</button>
+                            <button class="difficulty-btn extreme">ยากสุดๆ</button>
+                        </div>
+                    </div>
+
+                    <div class="size-selector">
+                        <h2>เลือกขนาดตาราง</h2>
+                        <div class="size-buttons">
+                            <button class="size-btn">4x4</button>
+                            <button class="size-btn">5x5</button>
+                            <button class="size-btn">6x6</button>
+                            <button class="size-btn">7x7</button>
+                            <button class="size-btn">8x8</button>
+                            <button class="size-btn">9x9</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="start-game">
+                    <button class="start-btn">เริ่มเกม</button>
+                    <button class="history-main-btn">ประวัติการเล่น</button>
+                    <button class="shop-main-btn" onclick="window.location.href='kenken-shop.html'">🛍️ ร้านค้า</button>
+                    <button class="help-main-btn" onclick="showHelpModal()">📖 คู่มือการเล่น</button>
+                </div>
+            </section>
+            <section class="game-section" style="display:none;">
+                <button class="back-btn">← กลับ</button>
+                <div class="main-content"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 DevNexus.KenKen. All rights reserved.</p>
+        </footer>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

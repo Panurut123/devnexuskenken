@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KenKen Admin Dashboard - ระบบจัดการขั้นสูง</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-body">
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle admin-theme-toggle" id="admin-theme-toggle" title="สลับธีม">
+        🌙
+    </button>
+
+    <div class="admin-container">
+        <!-- Sidebar Navigation -->
+        <nav class="admin-sidebar">
+            <div class="admin-logo">
+                <h2><i class="fas fa-chess-board"></i> KenKen Admin</h2>
+            </div>
+            
+            <ul class="admin-nav-menu">
+                <li class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-chart-dashboard"></i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item" data-tab="games">
+                    <i class="fas fa-gamepad"></i>
+                    <span>เกมทั้งหมด</span>
+                </li>
+                <li class="nav-item" data-tab="active">
+                    <i class="fas fa-play-circle"></i>
+                    <span>เกมที่กำลังเล่น</span>
+                </li>
+                <li class="nav-item" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>การวิเคราะห์</span>
+                </li>
+                <li class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>ตั้งค่า</span>
+                </li>
+            </ul>
+            
+            <div class="admin-user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">Administrator</div>
+                    <div class="user-role">System Admin</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <div class="header-left">
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">ภาพรวมระบบ KenKen</p>
+                </div>
+                <div class="header-right">
+                    <div class="last-updated">
+                        <i class="fas fa-clock"></i>
+                        อัปเดตล่าสุด: <span id="last-update-time">-</span>
+                    </div>
+                    <button class="refresh-btn" id="refresh-data" title="รีเฟรชข้อมูล">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section class="admin-tab active" id="dashboard-tab">
+                <!-- Quick Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card total-games">
+                        <div class="stat-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="total-games-count">0</div>
+                            <div class="stat-label">เกมทั้งหมด</div>
+                            <div class="stat-change" id="total-games-change">+0 วันนี้</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card completed-games">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="completed-games-count">0</div>
+                            <div class="stat-label">เกมที่เสร็จสิ้น</div>
+                            <div class="stat-change" id="completed-games-change">+0 วันนี้</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card active-games">
+                        <div class="stat-icon">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="active-games-count">0</div>
+                            <div class="stat-label">กำลังเล่น</div>
+                            <div class="stat-change" id="active-games-change">ขณะนี้</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card avg-time">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="avg-time-count">00:00</div>
+                            <div class="stat-label">เวลาเฉลี่ย</div>
+                            <div class="stat-change" id="avg-time-change">ต่อเกม</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-line"></i> เกมที่เล่นรายวัน</h3>
+                            <div class="chart-controls">
+                                <select id="days-filter">
+                                    <option value="7">7 วันที่แล้ว</option>
+                                    <option value="14">14 วันที่แล้ว</option>
+                                    <option value="30">30 วันที่แล้ว</option>
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="games-chart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> ระดับความยาก</h3>
+                        </div>
+                        <canvas id="difficulty-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <div class="activity-header">
+                        <h3><i class="fas fa-history"></i> กิจกรรมล่าสุด</h3>
+                        <div class="activity-controls">
+                            <button class="activity-filter active" data-filter="all">ทั้งหมด</button>
+                            <button class="activity-filter" data-filter="completed">เสร็จสิ้น</button>
+                            <button class="activity-filter" data-filter="started">เริ่มเกม</button>
+                        </div>
+                    </div>
+                    <div class="activity-list" id="recent-activity-list">
+                        <!-- Recent activities will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Games Tab -->
+            <section class="admin-tab" id="games-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-gamepad"></i> จัดการเกมทั้งหมด</h2>
+                    <div class="tab-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="games-search" placeholder="ค้นหาเกม...">
+                        </div>
+                        <select id="games-filter">
+                            <option value="all">ทั้งหมด</option>
+                            <option value="completed">เสร็จสิ้น</option>
+                            <option value="revealed">เปิดเฉลย</option>
+                            <option value="reset">รีเซ็ต</option>
+                            <option value="in-progress">กำลังเล่น</option>
+                        </select>
+                        <button class="export-btn" id="export-games">
+                            <i class="fas fa-download"></i> ส่งออก
+                        </button>
+                    </div>
+                </div>
+                <div class="games-table-container">
+                    <table class="admin-table" id="games-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ขนาด</th>
+                                <th>ความยาก</th>
+                                <th>เริ่มเกม</th>
+                                <th>เวลาที่ใช้</th>
+                                <th>สถานะ</th>
+                                <th>การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="games-table-body">
+                            <!-- Games data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="games-pagination">
+                    <!-- Pagination will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Active Games Tab -->
+            <section class="admin-tab" id="active-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-play-circle"></i> เกมที่กำลังเล่น</h2>
+                    <div class="active-count">
+                        กำลังเล่น: <span id="active-count-display">0</span> เกม
+                    </div>
+                </div>
+                <div class="active-games-grid" id="active-games-grid">
+                    <!-- Active games will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Analytics Tab -->
+            <section class="admin-tab" id="analytics-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-chart-line"></i> การวิเคราะห์ขั้นสูง</h2>
+                </div>
+                
+                <div class="analytics-section">
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-chart-bar"></i> สถิติตามขนาดตาราง</h3>
+                        <canvas id="size-stats-chart"></canvas>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3><i class="fas fa-clock"></i> การกระจายเวลาเล่น</h3>
+                        <canvas id="time-distribution-chart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="analytics-section">
+                    <div class="analytics-card full-width">
+                        <h3><i class="fas fa-calendar-alt"></i> แนวโน้มการเล่นรายเดือน</h3>
+                        <canvas id="monthly-trend-chart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section class="admin-tab" id="settings-tab">
+                <div class="tab-header">
+                    <h2><i class="fas fa-cog"></i> ตั้งค่าระบบ</h2>
+                </div>
+                
+                <div class="settings-section">
+                    <div class="settings-card">
+                        <h3><i class="fas fa-database"></i> จัดการข้อมูล</h3>
+                        <div class="settings-group">
+                            <button class="settings-btn danger" id="clear-history">
+                                <i class="fas fa-trash"></i> ลบประวัติการเล่นทั้งหมด
+                            </button>
+                            <button class="settings-btn warning" id="clear-stats">
+                                <i class="fas fa-chart-line"></i> รีเซ็ตสถิติ
+                            </button>
+                            <button class="settings-btn primary" id="backup-data">
+                                <i class="fas fa-save"></i> สำรองข้อมูล
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-card">
+                        <h3><i class="fas fa-tools"></i> การตั้งค่าระบบ</h3>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <label>รีเฟรชข้อมูลอัตโนมัติ</label>
+                                <input type="checkbox" id="auto-refresh" checked>
+                            </div>
+                            <div class="setting-item">
+                                <label>ความถี่ในการรีเฟรช (วินาที)</label>
+                                <input type="number" id="refresh-interval" value="30" min="5" max="300">
+                            </div>
+                            <div class="setting-item">
+                                <label>จำนวนเกมที่แสดงต่อหน้า</label>
+                                <select id="games-per-page">
+                                    <option value="10">10</option>
+                                    <option value="25" selected>25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

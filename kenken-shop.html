@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านค้า - DevNexus.KenKen</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --primary-light: #FF8E8E;
+            --secondary-color: #4ECDC4;
+            --accent-color: #45B7D1;
+            --success-color: #96CEB4;
+            --warning-color: #FFEAA7;
+            --danger-color: #DDA0DD;
+            --dark-color: #2D3436;
+            --light-color: #DDD;
+            --bg-color: #F8F9FA;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #FF6B6B;
+            --primary-light: #FF8E8E;
+            --secondary-color: #4ECDC4;
+            --accent-color: #45B7D1;
+            --success-color: #96CEB4;
+            --warning-color: #FFEAA7;
+            --danger-color: #DDA0DD;
+            --dark-color: #F8F9FA;
+            --light-color: #2D3436;
+            --bg-color: #2D3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: var(--bg-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .shop-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        
+        .shop-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shop-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(45deg) translateX(-100%); }
+            50% { transform: rotate(45deg) translateX(100%); }
+        }
+        
+        .shop-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .coin-balance {
+            font-size: 1.5rem;
+            font-weight: 600;
+            z-index: 2;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .coin-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.3);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 3;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-2px);
+        }
+        
+        .shop-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255,107,107,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .shop-item {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .shop-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(255,107,107,0.3);
+        }
+        
+        .shop-item.owned {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        }
+
+        .shop-item.special {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .shop-item.special::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd700, #7fba00, #00a651, #00b4d8, #4361ee, #7209b7);
+            background-size: 400% 400%;
+            border-radius: 18px;
+            z-index: -1;
+            animation: rainbow-border 3s ease-in-out infinite;
+        }
+
+        .shop-item.premium {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            animation: premium-glow 2s infinite alternate;
+        }
+
+        .shop-item.premium .item-title::after {
+            content: ' ✨PREMIUM✨';
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+        }
+
+        @keyframes rainbow-border {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes premium-glow {
+            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 50px rgba(255, 215, 0, 0.2); }
+        }
+        
+        .shop-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: transform 0.8s ease;
+        }
+        
+        .shop-item:hover::before {
+            transform: rotate(45deg) translateX(100%);
+        }
+        
+        .item-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .item-description {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            z-index: 2;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .item-price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            z-index: 2;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .buy-btn {
+            background: rgba(255,255,255,0.9);
+            color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            position: relative;
+            width: 100%;
+        }
+        
+        .buy-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .buy-btn:disabled {
+            background: rgba(255,255,255,0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Theme previews */
+        .theme-preview {
+            width: 100%;
+            height: 60px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-ocean-blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .theme-sunset-orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .theme-aurora-purple { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .theme-rose-gold { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
+        .theme-galaxy { background: linear-gradient(135deg, #2c3e50, #4a6741); }
+        .theme-neon-cyberpunk { background: linear-gradient(135deg, #ff006e, #8338ec); }
+
+        @media (max-width: 768px) {
+            .shop-container {
+                padding: 1rem;
+            }
+            
+            .shop-header {
+                padding: 1.5rem;
+            }
+            
+            .shop-title {
+                font-size: 2rem;
+            }
+            
+            .shop-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shop-container">
+        <div class="shop-header">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1 class="shop-title">🛍️ ร้านค้า KenKen</h1>
+            <div class="coin-balance">
+                <div class="coin-icon">🪙</div>
+                <span id="coin-balance">0</span> เหรียญ
+            </div>
+        </div>
+
+        <div class="shop-section">
+            <h2 class="section-title">
+                <i class="fas fa-gift"></i>
+                ข้อเสนอสุดพิเศษ
+            </h2>
+            <div class="shop-items" id="special-items">
+                <!-- Special items will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="shop-section">
+            <h2 class="section-title">
+                <i class="fas fa-palette"></i>
+                ธีมสี
+            </h2>
+            <div class="shop-items" id="theme-items">
+                <!-- Theme items will be generated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ระบบเหรียญ
+        function getCoins() {
+            return parseInt(localStorage.getItem('kenkenCoins') || '0');
+        }
+
+        function setCoins(amount) {
+            localStorage.setItem('kenkenCoins', amount.toString());
+            updateCoinDisplay();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coin-balance').textContent = getCoins().toLocaleString();
+        }
+
+        // ระบบธีม
+        function getOwnedThemes() {
+            return JSON.parse(localStorage.getItem('kenken_owned_themes') || '["default"]');
+        }
+
+        function addOwnedTheme(themeId) {
+            const owned = getOwnedThemes();
+            if (!owned.includes(themeId)) {
+                owned.push(themeId);
+                localStorage.setItem('kenken_owned_themes', JSON.stringify(owned));
+            }
+        }
+
+        function getCurrentTheme() {
+            return localStorage.getItem('kenken_current_theme') || 'default';
+        }
+
+        function setCurrentTheme(themeId) {
+            localStorage.setItem('kenken_current_theme', themeId);
+            applyTheme(themeId);
+        }
+
+        function applyTheme(themeId) {
+            document.documentElement.setAttribute('data-theme', themeId);
+            
+            // Apply theme colors based on themeId
+            const root = document.documentElement;
+            switch(themeId) {
+                case 'ocean-blue':
+                    root.style.setProperty('--primary-color', '#667eea');
+                    root.style.setProperty('--secondary-color', '#764ba2');
+                    root.style.setProperty('--bg-color', '#f0f4f8');
+                    break;
+                case 'sunset-orange':
+                    root.style.setProperty('--primary-color', '#f093fb');
+                    root.style.setProperty('--secondary-color', '#f5576c');
+                    root.style.setProperty('--bg-color', '#fff5f5');
+                    break;
+                case 'aurora-purple':
+                    root.style.setProperty('--primary-color', '#4facfe');
+                    root.style.setProperty('--secondary-color', '#00f2fe');
+                    root.style.setProperty('--bg-color', '#f0f9ff');
+                    break;
+                case 'rose-gold':
+                    root.style.setProperty('--primary-color', '#ffecd2');
+                    root.style.setProperty('--secondary-color', '#fcb69f');
+                    root.style.setProperty('--bg-color', '#fefcfb');
+                    break;
+                case 'galaxy':
+                    root.style.setProperty('--primary-color', '#2c3e50');
+                    root.style.setProperty('--secondary-color', '#4a6741');
+                    root.style.setProperty('--bg-color', '#1a1a1a');
+                    root.style.setProperty('--dark-color', '#ecf0f1');
+                    break;
+                case 'neon-cyberpunk':
+                    root.style.setProperty('--primary-color', '#ff006e');
+                    root.style.setProperty('--secondary-color', '#8338ec');
+                    root.style.setProperty('--bg-color', '#0a0a0a');
+                    root.style.setProperty('--dark-color', '#00ffff');
+                    break;
+                default:
+                    root.style.setProperty('--primary-color', '#FF6B6B');
+                    root.style.setProperty('--secondary-color', '#4ECDC4');
+                    root.style.setProperty('--bg-color', '#F8F9FA');
+                    root.style.setProperty('--dark-color', '#2D3436');
+                    break;
+            }
+        }
+
+        // ข้อมูลธีม
+        const themes = {
+            'default': {
+                name: 'ธีมเริ่มต้น',
+                description: 'ธีมสีแดงส้มคลาสสิก',
+                price: 0,
+                icon: '🎨',
+                preview: 'theme-default'
+            },
+            'ocean-blue': {
+                name: '🌊 Ocean Dream',
+                description: 'ธีมมหาสมุทรสุดงาม พร้อมคลื่นเคลื่อนไหวและประกายแสง',
+                price: 50,
+                icon: '🌊',
+                preview: 'theme-ocean-blue',
+                special: false
+            },
+            'sunset-orange': {
+                name: '🌅 Golden Sunset',
+                description: 'พระอาทิตย์ตกสีทองอร่าม พร้อมเอฟเฟกต์เปลวไฟนุ่มนวล',
+                price: 75,
+                icon: '🌅',
+                preview: 'theme-sunset-orange',
+                special: false
+            },
+            'aurora-purple': {
+                name: '✨ Aurora Magic',
+                description: 'แสงเหนือเวทมนตร์ พร้อมแสงระยิบระยับเหมือนเพชร',
+                price: 100,
+                icon: '✨',
+                preview: 'theme-aurora-purple',
+                special: true
+            },
+            'rose-gold': {
+                name: '🌹 Rose Gold Luxury',
+                description: 'ธีมโรสโกลด์พรีเมียม พร้อมเอฟเฟกต์ประกายทองคำ',
+                price: 150,
+                icon: '🌹',
+                preview: 'theme-rose-gold',
+                special: true
+            },
+            'galaxy': {
+                name: '🌌 Galaxy Supreme',
+                description: 'กาแล็กซี่อันยิ่งใหญ่ พร้อมดาวระยิบระยับและหมอกควัน',
+                price: 200,
+                icon: '🌌',
+                preview: 'theme-galaxy',
+                special: true
+            },
+            'neon-cyberpunk': {
+                name: '⚡ Neon Cyberpunk Pro',
+                description: 'ไซเบอร์พังค์สุดล้ำ พร้อมไฟนีออนกระพริบและเอฟเฟกต์ Matrix',
+                price: 300,
+                icon: '⚡',
+                preview: 'theme-neon-cyberpunk',
+                special: true
+            },
+            'diamond-crystal': {
+                name: '💎 Diamond Crystal',
+                description: 'เพชรคริสตัลล้ำค่า ประกายแสงรุ้งส่องสว่างไปทั่วหน้าจอ',
+                price: 500,
+                icon: '💎',
+                preview: 'theme-diamond-crystal',
+                special: true
+            },
+            'phoenix-fire': {
+                name: '🔥 Phoenix Rising',
+                description: 'นกฟีนิกซ์กับเปลวไฟสีทอง เอฟเฟกต์ไฟลุกโชติช่วงพิเศษ',
+                price: 600,
+                icon: '🔥',
+                preview: 'theme-phoenix-fire',
+                special: true
+            }
+        };
+
+        // ของขวัญพิเศษ
+        const specialGifts = {
+            'web-request': {
+                name: '🎁 ของขวัญสุดพิเศษ',
+                description: 'รีเควสเว็บจาก Panurut ได้ 1 เว็บ! แคปหน้าจอส่งที่ IG @devn3xus เพื่อรับของขวัญ',
+                price: 1000,
+                icon: '🎁',
+                type: 'special'
+            }
+        };
+
+        function buyTheme(themeId) {
+            const coins = getCoins();
+            const ownedThemes = getOwnedThemes();
+            const theme = themes[themeId];
+            
+            if (ownedThemes.includes(themeId)) {
+                // ถ้ามีแล้วให้เปลี่ยนธีม
+                setCurrentTheme(themeId);
+                alert(`✅ เปลี่ยนเป็นธีม "${theme.name}" แล้ว!`);
+                renderThemes();
+                return;
+            }
+            
+            if (coins >= theme.price) {
+                if (confirm(`ต้องการซื้อธีม "${theme.name}" ในราคา ${theme.price} เหรียญ?`)) {
+                    setCoins(coins - theme.price);
+                    addOwnedTheme(themeId);
+                    setCurrentTheme(themeId);
+                    
+                    alert(`🎉 ซื้อธีม "${theme.name}" สำเร็จ! และเปลี่ยนธีมแล้ว`);
+                    renderThemes();
+                }
+            } else {
+                alert(`❌ เหรียญไม่เพียงพอ! ต้องการ ${theme.price} เหรียญ (มี ${coins} เหรียญ)`);
+            }
+        }
+
+        function buySpecialGift(giftId) {
+            const coins = getCoins();
+            const gift = specialGifts[giftId];
+            
+            if (coins >= gift.price) {
+                if (confirm(`ต้องการซื้อ "${gift.name}" ในราคา ${gift.price} เหรียญ?\n\nคำแนะนำ: แคปหน้าจอการซื้อนี้แล้วส่งไปที่ IG @devn3xus เพื่อรับของขวัญนะ!`)) {
+                    setCoins(coins - gift.price);
+                    
+                    // บันทึกการซื้อ
+                    const purchases = JSON.parse(localStorage.getItem('kenken_special_purchases') || '[]');
+                    purchases.push({
+                        id: giftId,
+                        date: new Date().toISOString(),
+                        price: gift.price
+                    });
+                    localStorage.setItem('kenken_special_purchases', JSON.stringify(purchases));
+                    
+                    alert(`🎉 ซื้อ "${gift.name}" สำเร็จ!\n\n📸 อย่าลืมแคปหน้าจอนี้และส่งไปที่:\n📱 Instagram: @devn3xus\n💝 เพื่อรับของขวัญพิเศษนะ!`);
+                    renderSpecialGifts();
+                }
+            } else {
+                alert(`❌ เหรียญไม่เพียงพอ! ต้องการ ${gift.price} เหรียญ (มี ${coins} เหรียญ)`);
+            }
+        }
+
+        function renderSpecialGifts() {
+            const container = document.getElementById('special-items');
+            const purchases = JSON.parse(localStorage.getItem('kenken_special_purchases') || '[]');
+            
+            container.innerHTML = '';
+            
+            Object.entries(specialGifts).forEach(([giftId, gift]) => {
+                const isPurchased = purchases.some(p => p.id === giftId);
+                
+                const giftElement = document.createElement('div');
+                giftElement.className = `shop-item ${isPurchased ? 'owned' : ''}`;
+                giftElement.style.background = isPurchased ? 
+                    'linear-gradient(135deg, #4CAF50, #66BB6A)' : 
+                    'linear-gradient(135deg, #FFD700, #FFA500)';
+                
+                let buttonText = isPurchased ? '✅ ซื้อแล้ว' : `💰 ซื้อ ${gift.price} เหรียญ`;
+                
+                giftElement.innerHTML = `
+                    <div class="item-icon" style="font-size: 4rem;">${gift.icon}</div>
+                    <div class="item-title">${gift.name}</div>
+                    <div class="item-description">${gift.description}</div>
+                    ${!isPurchased ? `<div class="item-price">🪙 ${gift.price}</div>` : ''}
+                    <button class="buy-btn" onclick="buySpecialGift('${giftId}')" ${isPurchased ? 'disabled' : ''}>
+                        ${buttonText}
+                    </button>
+                    ${isPurchased ? '<div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">🔗 IG: @devn3xus</div>' : ''}
+                `;
+                
+                container.appendChild(giftElement);
+            });
+        }
+
+        function renderThemes() {
+            const container = document.getElementById('theme-items');
+            const ownedThemes = getOwnedThemes();
+            const currentTheme = getCurrentTheme();
+            
+            container.innerHTML = '';
+            
+            Object.entries(themes).forEach(([themeId, theme]) => {
+                const isOwned = ownedThemes.includes(themeId);
+                const isCurrent = currentTheme === themeId;
+                
+                const themeElement = document.createElement('div');
+                let cardClasses = 'shop-item';
+                
+                if (isOwned) cardClasses += ' owned';
+                if (theme.special) cardClasses += ' special';
+                if (theme.price >= 500) cardClasses += ' premium';
+                
+                themeElement.className = cardClasses;
+                
+                let buttonText = '';
+                let buttonClass = 'buy-btn';
+                
+                if (isCurrent) {
+                    buttonText = '✅ กำลังใช้';
+                    buttonClass += ' disabled';
+                } else if (isOwned) {
+                    buttonText = '🎨 ใช้ธีมนี้';
+                } else {
+                    buttonText = `💰 ซื้อ ${theme.price} เหรียญ`;
+                }
+                
+                themeElement.innerHTML = `
+                    <div class="theme-preview ${theme.preview}"></div>
+                    <div class="item-icon">${theme.icon}</div>
+                    <div class="item-title">${theme.name}</div>
+                    <div class="item-description">${theme.description}</div>
+                    ${!isOwned ? `<div class="item-price">🪙 ${theme.price}</div>` : ''}
+                    <button class="${buttonClass}" onclick="buyTheme('${themeId}')" ${isCurrent ? 'disabled' : ''}>
+                        ${buttonText}
+                    </button>
+                `;
+                
+                container.appendChild(themeElement);
+            });
+        }
+
+        // เริ่มต้น
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCoinDisplay();
+            renderSpecialGifts();
+            renderThemes();
+            
+            // Apply current theme
+            const currentTheme = getCurrentTheme();
+            applyTheme(currentTheme);
+        });
+    </script>
+</body>
+</html> 
