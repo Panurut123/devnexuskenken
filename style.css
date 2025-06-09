@@ -2722,3 +2722,185 @@ button {
 .help-modal-content::-webkit-scrollbar-thumb:hover {
     background: var(--primary-light);
 }
+
+/* Number Pad Styles */
+.number-pad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--surface-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.number-pad-instruction {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted, #666);
+    margin-bottom: 4px;
+    font-family: 'Prompt', sans-serif;
+}
+
+.number-btn {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Prompt', sans-serif;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.number-btn:hover {
+    background: var(--primary-hover, #2980b9);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.number-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.number-btn.clear-btn {
+    background: #dc3545;
+    grid-column: span 2;
+}
+
+.number-btn.clear-btn:hover {
+    background: #c82333;
+}
+
+.number-btn:disabled,
+.number-btn.disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.number-btn:disabled:hover,
+.number-btn.disabled:hover {
+    background: #6c757d;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.number-btn.correct-hint {
+    background: #28a745;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.4);
+    animation: pulse-hint 2s infinite;
+}
+
+.number-btn.correct-hint:hover {
+    background: #218838;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.6);
+}
+
+@keyframes pulse-hint {
+    0%, 100% { 
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(40, 167, 69, 0.7);
+    }
+}
+
+/* Dark theme support */
+[data-theme="dark"] .number-pad {
+    background: var(--dark-surface);
+    border-color: var(--dark-border);
+}
+
+[data-theme="dark"] .number-btn {
+    color: var(--dark-text);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .number-btn:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .number-pad-instruction {
+    color: var(--dark-text-muted, #aaa);
+}
+
+/* Mobile responsive for number pad */
+@media (max-width: 600px) {
+    .number-pad {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 8px;
+        margin-top: 8px;
+    }
+    
+    .number-pad-instruction {
+        font-size: 11px;
+        margin-bottom: 2px;
+    }
+    
+    .number-btn {
+        padding: 10px;
+        font-size: 14px;
+        min-height: 40px;
+    }
+    
+    .number-btn.clear-btn {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .number-pad {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        padding: 6px;
+        margin-top: 6px;
+    }
+    
+    .number-pad-instruction {
+        font-size: 10px;
+        margin-bottom: 2px;
+    }
+    
+    .number-btn {
+        padding: 8px;
+        font-size: 13px;
+        min-height: 36px;
+    }
+    
+    .number-btn.clear-btn {
+        grid-column: span 3;
+    }
+}
+
+/* Landscape mode optimization for number pad */
+@media (max-height: 600px) and (orientation: landscape) {
+    .number-pad {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 4px;
+        padding: 6px;
+        margin-top: 4px;
+    }
+    
+    .number-btn {
+        padding: 6px;
+        font-size: 12px;
+        min-height: 32px;
+    }
+    
+    .number-btn.clear-btn {
+        grid-column: span 2;
+    }
+}
