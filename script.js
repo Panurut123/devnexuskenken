@@ -424,6 +424,9 @@ class KenkenGame {
         setTimeout(() => {
             cell.style.transform = '';
         }, 150);
+        
+        // Update button states when cell is selected
+        this.updateButtonStates();
     }
 
     handleNumberInput(number) {
@@ -622,6 +625,42 @@ class KenkenGame {
         statsBtn.textContent = 'สถิติ';
         statsBtn.addEventListener('click', () => this.showStats());
         
+        // Create number pad for mobile input
+        const numberPad = document.createElement('div');
+        numberPad.className = 'number-pad';
+        
+        // Add instruction text
+        const instruction = document.createElement('div');
+        instruction.className = 'number-pad-instruction';
+        instruction.textContent = 'เลือกเซลล์แล้วกดตัวเลขที่ต้องการ';
+        numberPad.appendChild(instruction);
+        
+        // Clear button
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'number-btn clear-btn';
+        clearBtn.textContent = 'ลบ';
+        clearBtn.addEventListener('click', () => {
+            if (this.selectedCell) {
+                this.soundManager.playSound('button');
+                this.handleNumberInput(0);
+            }
+        });
+        numberPad.appendChild(clearBtn);
+        
+        // Number buttons (1 to size)
+        for (let i = 1; i <= this.size; i++) {
+            const numberBtn = document.createElement('button');
+            numberBtn.className = 'number-btn';
+            numberBtn.textContent = i;
+            numberBtn.addEventListener('click', () => {
+                if (this.selectedCell) {
+                    this.soundManager.playSound('click');
+                    this.handleNumberInput(i);
+                }
+            });
+            numberPad.appendChild(numberBtn);
+        }
+        
         // Create responsive controls layout
         const controlsGrid = document.createElement('div');
         controlsGrid.className = 'controls-grid';
@@ -654,9 +693,20 @@ class KenkenGame {
         
         controlsContainer.appendChild(soundBtn);
         
+        // Add number pad to controls
+        controlsContainer.appendChild(numberPad);
+        
         // Store references to buttons for later use
         this.undoBtn = undoBtn;
         this.redoBtn = redoBtn;
+        this.numberPad = numberPad;
+        
+        // Initialize number pad state
+        const numberBtns = numberPad.querySelectorAll('.number-btn');
+        numberBtns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('disabled');
+        });
         
         // Add controls to game section
         const oldControls = document.querySelector('.game-controls');
@@ -671,6 +721,35 @@ class KenkenGame {
         }
         if (this.redoBtn) {
             this.redoBtn.disabled = this.redoStack.length === 0;
+        }
+        
+        // Update number pad button states
+        if (this.numberPad) {
+            const numberBtns = this.numberPad.querySelectorAll('.number-btn:not(.clear-btn)');
+            const clearBtn = this.numberPad.querySelector('.clear-btn');
+            const hasSelectedCell = this.selectedCell !== null;
+            
+            // Update clear button
+            if (clearBtn) {
+                clearBtn.disabled = !hasSelectedCell;
+                if (hasSelectedCell) {
+                    clearBtn.classList.remove('disabled');
+                } else {
+                    clearBtn.classList.add('disabled');
+                }
+            }
+            
+            // Update number buttons
+            numberBtns.forEach((btn, index) => {
+                const number = index + 1;
+                btn.disabled = !hasSelectedCell;
+                
+                if (hasSelectedCell) {
+                    btn.classList.remove('disabled');
+                } else {
+                    btn.classList.add('disabled');
+                }
+            });
         }
     }
     
